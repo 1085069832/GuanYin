@@ -5,14 +5,15 @@ using UnityEngine;
 
 enum MoveMode
 {
-    ToRight,
-    ToLeft
+    ToRight,//向右移
+    ToLeft//向左移
 }
 
 public class CloudController : MonoBehaviour
 {
     bool isRight;
     [SerializeField] MoveMode mode;
+    float moveX = 20;//云 endX
 
     void Awake()
     {
@@ -33,11 +34,33 @@ public class CloudController : MonoBehaviour
         MoveCloud();
     }
 
+    void Update()
+    {
+        //销毁
+        if (isRight)
+        {
+            if (transform.position.x == moveX)
+            {
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            if (transform.position.x == -moveX)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 移动云
+    /// </summary>
     void MoveCloud()
     {
         if (isRight)
-            transform.DOMove(new Vector3(20, transform.position.y, transform.position.z), 60).SetEase(Ease.OutQuad);
+            transform.DOMove(new Vector3(moveX, transform.position.y, transform.position.z), 60).SetEase(Ease.OutQuad);
         else
-            transform.DOMove(new Vector3(-20, transform.position.y, transform.position.z), 60).SetEase(Ease.OutQuad);
+            transform.DOMove(new Vector3(-moveX, transform.position.y, transform.position.z), 60).SetEase(Ease.OutQuad);
     }
 }

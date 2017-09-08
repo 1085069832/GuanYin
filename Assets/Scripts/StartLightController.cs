@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class StartLightController : MonoBehaviour
 {
-    [SerializeField] GoddessController goddessController;
+    [SerializeField] GoddessController goddessController;//观音
     [SerializeField] Material mat;
     [SerializeField] float alpha = 0;
     Color color;
@@ -16,6 +16,10 @@ public class StartLightController : MonoBehaviour
         StartCoroutine(ShowLight());
     }
 
+    /// <summary>
+    /// 显示
+    /// </summary>
+    /// <returns></returns>
     IEnumerator ShowLight()
     {
         yield return null;
@@ -27,9 +31,10 @@ public class StartLightController : MonoBehaviour
         {
             StopCoroutine(ShowLight());
             StopParticle();
-            goddessController.gameObject.SetActive(true);
-            goddessController.DoMove();
             StartCoroutine(HideLight());
+
+            goddessController.gameObject.SetActive(true);//移动观音
+            goddessController.DoMove();
         }
         else
         {
@@ -37,6 +42,10 @@ public class StartLightController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 隐藏
+    /// </summary>
+    /// <returns></returns>
     IEnumerator HideLight()
     {
         yield return null;
