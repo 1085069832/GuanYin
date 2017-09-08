@@ -5,11 +5,8 @@ using UnityEngine;
 
 public class GoddessController : MonoBehaviour
 {
-    [HideInInspector] public bool isMoving;
-
     public void DoMove()
     {
-        isMoving = true;
-        transform.DOMove(Camera.main.transform.position + Vector3.forward * 0.6f, 6);
+        transform.DOMove(new Vector3(transform.position.x, -1.5f, transform.position.z), 5).SetEase(Ease.OutQuad);
     }
 }

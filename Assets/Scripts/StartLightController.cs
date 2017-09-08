@@ -6,59 +6,47 @@ using UnityEngine;
 public class StartLightController : MonoBehaviour
 {
     [SerializeField] GoddessController goddessController;
-    [SerializeField] List<GameObject> objs;
-    public float alpha = 1f;
+    [SerializeField] Material mat;
+    [SerializeField] float alpha = 0;
+    Color color;
 
-    // Use this for initialization
-    void Start()
+    void Awake()
     {
-        ShowLight();
+        color = mat.GetColor("_TintColor");
+        StartCoroutine(ShowLight());
     }
 
-    private void Update()
+    IEnumerator ShowLight()
     {
-        alpha = Mathf.Max(0, alpha - 0.005f);
-        Color color = objs[0].GetComponent<MeshRenderer>().material.GetColor("_TintColor");
+        yield return null;
+        alpha += 0.003f;
+        var a = Mathf.Clamp(alpha, 0, 1);
+        mat.SetColor("_TintColor", new Color(color.r, color.g, color.b, a));
 
-        for (int i = 0; i < objs.Count; i++)
+        if (a == 1)
         {
-            objs[i].GetComponent<MeshRenderer>().material.SetColor("_TintColor", new Color(color.r, color.g, color.b, alpha));
+            StopCoroutine(ShowLight());
+            StopParticle();
+            goddessController.gameObject.SetActive(true);
+            goddessController.DoMove();
+            StartCoroutine(HideLight());
         }
-    }
-
-    void ShowLight()
-    {
-        Tweener move = transform.DOMove(Camera.main.transform.forward * 10 - Vector3.up * 3, 2);
-
-        move.onComplete = delegate
+        else
         {
-            goddessController.gameObject.SetActive(true);//显示观音
-            StartCoroutine(WaitStartHideLight());
-        };
-    }
-
-    IEnumerator WaitStartHideLight()
-    {
-        yield return new WaitForSeconds(2f);
-        StartCoroutine(HideLight());
+            StartCoroutine(ShowLight());
+        }
     }
 
     IEnumerator HideLight()
     {
         yield return null;
-        transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(0, transform.localScale.y, 0), 0.01f);
+        alpha -= 0.002f;
+        var a = Mathf.Clamp(alpha, 0, 1);
+        mat.SetColor("_TintColor", new Color(color.r, color.g, color.b, a));
 
-        if (!goddessController.isMoving && transform.localScale.x <= 0.2f)
+        if (a == 0)
         {
-            goddessController.DoMove();
-        }
-
-        if (transform.localScale.x < 0.01f)
-        {
-            StopParticle();
             StopCoroutine(HideLight());
-            transform.localScale = Vector3.zero;
-
         }
         else
         {
